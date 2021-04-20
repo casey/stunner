@@ -16,7 +16,7 @@ fn main() {
     .expect("Failed to enter non-blocking mode");
 
   // Poll for data every 5 milliseconds for 5 seconds.
-  let mut buffer = [0u8; 1024];
+  let buffer = &mut [0u8; 1024];
 
   loop {
     let sent = socket
@@ -24,12 +24,12 @@ fn main() {
       .unwrap();
     assert_eq!(sent, message.len());
 
-    let result = socket.recv(&mut buffer);
+    let result = socket.recv(buffer);
 
     match result {
-      // If `recv` was successfull, print the number of bytes received.
+      // If `recv` was successful, print the number of bytes received.
       // The received data is stored in `buffer`.
-      Ok(_) => println!("Message recieved: {}", String::from_utf8_lossy(&buffer)),
+      Ok(_) => println!("Message received: {}", String::from_utf8_lossy(buffer)),
       // If we get an error other than "would block", print the error.
       Err(ref err) if err.kind() != ErrorKind::WouldBlock => {
         println!("Something went wrong: {}", err)
